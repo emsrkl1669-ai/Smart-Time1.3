@@ -6,6 +6,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { User, Department, AttendanceRecord, SystemSettings, WorkLocation } from './types';
 import { api, getOfflineQueue, isOnline, subscribeToLocalMutations } from './services/api';
+import { testFirestoreConnection } from './services/firebase';
 import { LoginModal } from './components/LoginModal';
 import { Navbar, DeviceMode } from './components/Navbar';
 import { CheckInCard } from './components/CheckInCard';
@@ -98,6 +99,15 @@ export default function App() {
     }
 
     loadAllData();
+
+    // Validate Cloud Firestore Connection (smart-time-ca6f9)
+    testFirestoreConnection().then((res) => {
+      if (res.success) {
+        console.log('☁️ Cloud Firestore connected successfully (smart-time-ca6f9).');
+      } else {
+        console.warn('Cloud Firestore connection check note:', res.error);
+      }
+    }).catch(() => {});
 
     // Synchronize Thai Real-Time from server
     api.syncServerTime().catch(() => {});
